@@ -1,0 +1,6 @@
+@echo off
+chcp 65001 > nul
+title Sea battle
+cd /d "\\ИМЯ_ПК_ИЛИ_IP\ИМЯ_ОБЩЕЙ_ПАПКИ"
+java -jar "%~dp0test task.jar"
+pause
