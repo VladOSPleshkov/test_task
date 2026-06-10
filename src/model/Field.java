@@ -104,21 +104,34 @@ public class Field {
 
     public void print(boolean hideShips) {
         System.out.print("   ");
-        for (int i = 0; i < SIZE; i++)
+        for (int i = 0; i < SIZE; i++) {
             System.out.print(COL_LABELS.charAt(i) + " ");
+        }
         System.out.println();
-
         for (int y = 0; y < SIZE; y++) {
-            System.out.printf("%-3d", y + 1);
+            int rowNumber = y + 1;
+            if (rowNumber < 10) {
+                System.out.print(rowNumber + "  ");
+            } else {
+                System.out.print(rowNumber + " ");
+            }
+
             for (int x = 0; x < SIZE; x++) {
                 CellState state = grid[y][x];
+                char symbol = '~';
 
-                char symbol = switch (state) {
-                    case SHIP -> hideShips ? '~' : 'O';
-                    case HIT -> 'X';
-                    case MISS -> '*';
-                    default -> '~';
-                };
+                if (state == CellState.SHIP) {
+                    if (hideShips) {
+                        symbol = '~';
+                    } else {
+                        symbol = 'O';
+                    }
+                } else if (state == CellState.HIT) {
+                    symbol = 'X';
+                } else if (state == CellState.MISS) {
+                    symbol = '*';
+                }
+
                 System.out.print(symbol + " ");
             }
             System.out.println();

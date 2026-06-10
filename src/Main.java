@@ -7,11 +7,12 @@ import java.util.Scanner;
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
+    private static final int TOTAL_SHIP_CELLS = 20;
 
     public static void main(String[] args) {
         System.out.println("Морской бой");
         System.out.println("Введите ваше имя:");
-        String name = scanner.nextLine();
+        String name = scanner.nextLine().trim();
         System.out.println("1 - Одиночная игра (против бота)");
         System.out.println("2 - Игра вдвоём (через файл синхронизации)");
         System.out.print("Выберите режим: ");
@@ -19,67 +20,53 @@ public class Main {
         int mode = readInt();
 
         if (mode == 1) {
-            startSinglePlayer();
+            startSinglePlayer(name);
         } else if (mode == 2) {
-            startTwoPlayer();
+            startTwoPlayer(name);
         } else {
             System.out.println("Неверный выбор.");
         }
     }
 
-    private static void startSinglePlayer() {
-        Field myField = new Field();
+    private static void startSinglePlayer(String name) {
         Field botField = new Field();
-        System.out.println("\nРасстановка кораблей");
 
-        myField = buildField();
+        Field myField = buildField();
         //placeShips(myField);
 
         placeShipsRandomly(botField);
 
-        new Game(myField, botField, scanner).start();
+        new Game(myField, botField, name, scanner).start();
     }
 
-    private static void choosePlacementMode(Field field) {
-        System.out.println("Как вы хотите расставить свои корабли?");
-        System.out.println("1 - Вручную");
-        System.out.println("2 - Автоматически");
-        System.out.print("Ваш выбор: ");
-        int choice = readInt();
-
-        if (choice == 1) {
-            placeShips(field);
-        } else {
-            placeShipsRandomly(field);
-            System.out.println("Автоматическая расстановка выполнена:");
-            field.print(false);
-            pause(2000);
-        }
-    }
-
-    private static void startTwoPlayer() {
+    private static void startTwoPlayer(String name) {
         System.out.print("Введите ваш номер игрока (0 или 1): ");
         int playerIndex = readInt();
         if (playerIndex != 0 && playerIndex != 1) {
             System.out.println("Неверный номер игрока.");
             return;
         }
+        GameSync sync = new GameSync();
 
         Field myField = new Field();
         //поле противника - только для отслеживания выстрелов
-        Field opponentTrackingField = new Field();
+        Field opponentTracking = new Field();
+
 
         System.out.println("\nРасставьте свои корабли.");
-        placeShips(myField);
-
+        //placeShips(myField);
+        sync.signalReady(playerIndex, name);
         System.out.println("Ожидайте, пока второй игрок расставит корабли...");
-        // Небольшая пауза, чтобы игрок успел прочитать сообщение
-        pause(2000);
 
-        GameSync sync = new GameSync();
-        if (playerIndex == 0) sync.clearSync();
+        sync.signalReady(playerIndex, name);
+        String opponentName = sync.waitForOpponentReady(playerIndex, 5 * 60 * 1000);
+        if (opponentName == null) {
+            System.out.println("Противник не подключился.");
+            return;
+        }
 
-        new Game(myField, opponentTrackingField, scanner, playerIndex, sync).start();
+
+        new Game(myField, opponentTracking, name, scanner, playerIndex, sync, TOTAL_SHIP_CELLS).start();
     }
 
     private static void placeShips(Field field) {
