@@ -7,7 +7,8 @@ import java.util.Scanner;
 public class Main {
 
     private static final Scanner scanner = new Scanner(System.in);
-    private static final int TOTAL_SHIP_CELLS = 20;
+    private static final int TOTAL_SHIP_CELLS = 56;
+    private static final int[] fleet = {6, 5, 5, 4, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1};
 
     public static void main(String[] args) {
         System.out.println("Морской бой");
@@ -71,7 +72,6 @@ public class Main {
 
     private static void placeShips(Field field) {
 
-        int[] fleet = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
 
         System.out.println("Вам нужно разместить следующие корабли:");
         System.out.println("1 корабль размером 4, 2 корабля по 3, 3 корабля по 2, 4 корабля по 1");
@@ -163,7 +163,6 @@ public class Main {
 
     //случайная расстановка
     private static void placeShipsRandomly(Field field) {
-        int[] fleet = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
         var random = new java.util.Random();
 
         for (int shipSize : fleet) {

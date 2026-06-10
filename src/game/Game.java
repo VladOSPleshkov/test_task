@@ -161,7 +161,7 @@ public class Game {
     private boolean handleOpponentTurn() {
         System.out.println("Ожидание хода противника...");
 
-        String[] incoming = sync.waitForIncomingShot(playerIndex, 10 * 60 * 1000);
+        String[] incoming = sync.waitForIncomingShot(playerIndex, 5 * 60 * 1000);
         if (incoming == null) {
             System.out.println("Противник не ответил. Завершение.");
             return true;
